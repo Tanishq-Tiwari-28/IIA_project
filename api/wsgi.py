@@ -1,7 +1,7 @@
 from waitress import serve
 import webbrowser
 import threading
-from dashboard import app
+from api.dashboard import app
 
 
 def open_browser():
