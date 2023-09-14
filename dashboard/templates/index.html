@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Input Form</title>
+</head>
+<body>
+    <h1>Input Form</h1>
+    <form method="POST">
+        <label for="input_type">Select Input Type:</label>
+        <select id="input_type" name="input_type">
+            <option value="drug_name">Drug Name</option>
+            <option value="chembl_id">Chembl ID</option>
+            <option value="pubchem_id">PubChem ID</option>
+            <option value="smiles">SMILES</option>
+        </select><br><br>
+        <label for="input_data">Input Data:</label>
+        <input type="text" id="input_data" name="input_data"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
