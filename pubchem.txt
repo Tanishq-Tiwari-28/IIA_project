@@ -1,0 +1,55 @@
+-- Table to store compound information
+CREATE TABLE Compounds (
+    compound_id INT PRIMARY KEY,
+    name VARCHAR(255),
+    formula VARCHAR(50),
+    molecular_weight DECIMAL(10, 5),
+    exact_mass DECIMAL(10, 5),
+    isomeric_smiles VARCHAR(255),
+    canonical_smiles VARCHAR(255),
+    inchi VARCHAR(255),
+    inchikey VARCHAR(50),
+    charge INT,
+    complexity INT,
+    tpsa DECIMAL(10, 5),
+    xlogp DECIMAL(10, 5)
+);
+ 
+-- Table to store atom information
+CREATE TABLE Atoms (
+    atom_id INT PRIMARY KEY,
+    compound_id INT,
+    aid INT,
+    number INT,
+    element VARCHAR(2),
+    x DECIMAL(10, 5),
+    y DECIMAL(10, 5),
+    FOREIGN KEY (compound_id) REFERENCES Compounds(compound_id)
+);
+
+-- Table to store bond information
+CREATE TABLE Bonds (
+    bond_id INT PRIMARY KEY,
+    compound_id INT,
+    aid1 INT,
+    aid2 INT,
+    bond_order INT,
+    FOREIGN KEY (compound_id) REFERENCES Compounds(compound_id),
+    FOREIGN KEY (aid1) REFERENCES Atoms(atom_id),
+    FOREIGN KEY (aid2) REFERENCES Atoms(atom_id)
+);
+
+-- Table to store properties and fingerprints
+CREATE TABLE CompoundProperties (
+    property_id INT PRIMARY KEY,
+    compound_id INT,
+    h_bond_acceptor_count INT,
+    h_bond_donor_count INT,
+    heavy_atom_count INT,
+    rotatable_bond_count INT,
+    fingerprint VARCHAR(255),
+    fingerprint_type VARCHAR(50),
+    FOREIGN KEY (compound_id) REFERENCES Compounds(compound_id)
+);
+
+

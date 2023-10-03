@@ -1,0 +1,58 @@
+-- Create a table to store drug information
+CREATE TABLE Drug (
+    drug_id INT AUTO_INCREMENT PRIMARY KEY,
+    chembl_id VARCHAR(50) NOT NULL,
+    pref_name VARCHAR(255) NOT NULL,
+    atc_classifications JSON,
+    availability_type INT,
+    biotherapeutic JSON,
+    black_box_warning INT,
+    chebi_par_id INT,
+    chemical_probe INT,
+    chirality INT,
+    cross_references JSON,
+    dosed_ingredient BOOLEAN,
+    first_approval INT,
+    first_in_class INT,
+    helm_notation TEXT,
+    indication_class VARCHAR(255),
+    inorganic_flag INT,
+    max_phase VARCHAR(10),
+    molecule_chembl_id VARCHAR(50) NOT NULL,
+    molecule_hierarchy JSON,
+    molecule_properties JSON,
+    molecule_structures JSON,
+    molecule_synonyms JSON,
+    molecule_type VARCHAR(255),
+    natural_product BOOLEAN,
+    oral BOOLEAN,
+    parenteral BOOLEAN,
+    polymer_flag BOOLEAN,
+    prodrug BOOLEAN,
+    structure_type VARCHAR(50),
+    therapeutic_flag BOOLEAN,
+    topical BOOLEAN,
+    usan_stem VARCHAR(50),
+    usan_stem_definition VARCHAR(255),
+    usan_substem VARCHAR(50),
+    usan_year INT,
+    withdrawn_flag BOOLEAN
+);
+
+-- Create a table to store drug synonyms
+CREATE TABLE DrugSynonym (
+    synonym_id INT AUTO_INCREMENT PRIMARY KEY,
+    drug_id INT,
+    molecule_synonym VARCHAR(255) NOT NULL,
+    syn_type VARCHAR(50),
+    FOREIGN KEY (drug_id) REFERENCES Drug(drug_id)
+);
+
+-- Create a table to store drug cross-references
+CREATE TABLE CrossReference (
+    xref_id INT AUTO_INCREMENT PRIMARY KEY,
+    drug_id INT,
+    xref_name VARCHAR(255) NOT NULL,
+    xref_src VARCHAR(255),
+    FOREIGN KEY (drug_id) REFERENCES Drug(drug_id)
+);
