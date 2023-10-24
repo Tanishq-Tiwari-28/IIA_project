@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request, redirect, session
-from query import get_drug_info_chembl , get_drug_info_pubchem  
+from query import get_drug_info_chembl , get_drug_info_pubchem , get_drug_from_Unichem
+from global_schema import making_global_schema , schema_mapping
 import json
 import redis
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Change this to a random, secure key
 
 redis_client = redis.Redis(host='localhost', port=6379, db=0)
-
+import importlib
 @app.route("/", methods=["GET", "POST"])
 def home():
     print('in home')
@@ -16,20 +17,32 @@ def home():
         # Store the data in a session
         session["input_type"] = input_type
         session["input_data"] = input_data
-
+ 
         print(input_type , input_data)
-        if(input_type == "drug_name"):
-            drug_info_pubchem = get_drug_info_pubchem(input_data)
-            print(type(drug_info_pubchem))
-            redis_client.set("drug_info_pubchem", json.dumps(drug_info_pubchem))
-            # chunk_size = 500 # Adjust the chunk size based on browser limitations
-            # chunks = [drug_info_pubchem[i:i + chunk_size] for i in range(0, len(drug_info_pubchem), chunk_size)]
-            # for i, chunk in enumerate(chunks):
-            #     cookie_name = f"drug_info_pubchem_chunk_{i}"
-            #     session[cookie_name] = json.dumps(chunk)
-            drug_info_chembl , global_values = get_drug_info_chembl(input_data)
-            session["drug_info_chembl"] = drug_info_chembl
-            session["global_values"] = global_values
+        if(input_type == "drug_name"): 
+            # module_name = 'query'
+            # function_names = ['get_drug_info_chembl', 'get_drug_info_pubchem']
+
+            # data_sources = {}
+            # for function_name in function_names:
+            #     data_sources[function_name] = {"module": module_name, "function": function_name}
+            data_sources = {
+                "chembl": {"module": 'query', "function": "get_drug_info_chembl"},
+                "pubchem": {"module": 'query', "function": "get_drug_info_pubchem"},
+                # "unichem": {"module": 'query', "function": "get_drug_info_Unichem"},
+            }
+            session['sources'] = data_sources
+            
+            for data_source_name,  function_info in data_sources.items():
+                module_name = function_info['module']
+                function_name = function_info['function']
+                module = importlib.import_module(module_name)
+                data_function = getattr(module, function_name)
+                data = data_function(input_data)
+                redis_key = data_source_name
+                redis_client.set(redis_key, json.dumps(data))
+                # session[data_source_name] = data
+                print("Cache stored successfully")
             return redirect("/result")
             
     return render_template("index.html")
@@ -40,37 +53,35 @@ def home():
 def result():
     input_type = session.get("input_type", "No input type")
     input_data = session.get("input_data", "No input data")
-    drug_info_chembl = session.get("drug_info_chembl", "No Drug Found")
-    global_values = session.get("global_values", "No Drug Found")
+    data_sources = session.get("sources", "No input data")
+    print(data_sources)
 
-    # drug_info_pubchem = session.get("drug_info_pubchem", "No Drug Found")
-    # assembled_drug_info_pubchem = {}
-    # chunk_index = 0
-    # while True:
-    #     cookie_name = f"drug_info_pubchem_chunk_{chunk_index}"
-    #     chunk_data = session.get(cookie_name)
-    #     if chunk_data:
-    #         chunk = json.loads(chunk_data)
-    #         assembled_drug_info_pubchem.update(chunk)
-    #         chunk_index += 1
-    #     else:
-    #         break
+    assembled_data = {}
+    try:
+        for data_source_name in data_sources.keys():
+            data_json = redis_client.get(data_source_name)
+            # print(data_json)
+            if data_json:
+                data = json.loads(data_json)
+                # print(data)
+                if data:
+                    assembled_data[data_source_name] = data
+            # data_json = session.get(data_source_name)
+            # data = json.loads(data_json)
+            # assembled_data[data_source_name] = data
+            print("Cache retrieved successfully")
+    except:
+        print("Cache not retrieved successfully")
 
-    # Remove the session data
-    # for i in range(chunk_index):
-    #     cookie_name = f"drug_info_pubchem_chunk_{i}"
-    #     session.pop(cookie_name, None)
 
-    drug_info_pubchem_json = redis_client.get("drug_info_pubchem")
-    if drug_info_pubchem_json:
-        assembled_drug_info_pubchem = json.loads(drug_info_pubchem_json)
-    else:
-        assembled_drug_info_pubchem = {}
-    # print("dhsfghsfgh",assembled_drug_info_pubchem) 
-    session.pop("drug_info_chembl", None)
-    print(global_values)
-    return render_template("result.html", input_type=input_type, input_data=input_data , drug_info_chembl=drug_info_chembl ,drug_info_pubchem=assembled_drug_info_pubchem , global_values = global_values) 
+    
+    return render_template("result.html", input_type=input_type, input_data=input_data , assembled_data = assembled_data)
 
+
+    #drug_info_chembl=drug_info_chembl
+
+    #drug_info_pubchem=assembled_drug_info_pubchem
+    #global_values = global_values
     #drug_info_pubchem=assembled_drug_info_pubchem
 
 
