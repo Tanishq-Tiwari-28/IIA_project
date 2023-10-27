@@ -9,22 +9,37 @@
     <p>Input Type: {{ input_type }}</p>
     <p>Input Data: {{ input_data }}</p>
 
+    
+
     <h2>CHEMBL Data:</h2>
-    <ul>
-        {% for key, value in assembled_data['chembl'].items() %}
-        <li>{{ key }}: {{ value }}</li>
-        {% endfor %}
-    </ul>
+        <ul>
+            {% for key, value in assembled_data['chembl'].items() %}
+            <li>{{ key }}: {{ value }}</li>
+            {% endfor %}
+        </ul>
     
     <h2>PUBCHEM Data:</h2>
+        <ul>
+            {% for key, value in assembled_data['pubchem'].items() %}
+            <li>{{ key }}: {{ value }}</li>
+            {% endfor %}
+        </ul>
+    
+    {%if assembled_data['unichem']%}
+    <h2>UNICHEM Data:</h2>
     <ul>
-        {% for key, value in assembled_data['pubchem'].items() %}
+        {% for key, value in assembled_data['unichem'].items() %}
+        <li>{{ key }}: {{ value }}</li>
+        {% endfor %}
+    </ul>
+    {%endif%}
+
+    <h2>GLOBAL Data:</h2>
+    <ul>
+        {% for key, value in global_values.items() %}
         <li>{{ key }}: {{ value }}</li>
         {% endfor %}
     </ul>
 
-    
-
-
-</body>
+    </body>
 </html>

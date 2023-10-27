@@ -9,13 +9,30 @@
         <label for="input_type">Select Input Type:</label>
         <select id="input_type" name="input_type">
             <option value="drug_name">Drug Name</option>
+            <option value="Inchikey">Inchi Key</option>
             <option value="chembl_id">Chembl ID</option>
             <option value="pubchem_id">PubChem ID</option>
-            <option value="smiles">SMILES</option>
+            <option value="smiles">cannonical smiles</option>
         </select><br><br>
         <label for="input_data">Input Data:</label>
         <input type="text" id="input_data" name="input_data"><br><br>
-        <input type="submit" value="Submit">
+
+        <label for="source_add">Add a data source:</label>
+        <select id="source_add" name="source_add">
+            <option value="NONE">NONE</option>
+            <option value="unichem">UNICHEM</option>
+        </select><br><br>
+
+        <label for="source_remove">Remove a data source:</label>
+        <select id="source_remove" name="source_remove">
+            <option value="NONE">NONE</option>
+            <option value="unichem">UNICHEM</option>
+        </select><br><br>
+
+        <input type="submit" value="Submit"><br><br>
+
     </form>
+    
+
 </body>
 </html>
