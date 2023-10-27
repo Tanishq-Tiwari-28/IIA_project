@@ -1,6 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/dashboard/(.*)", "destination": "/api/dashboard" },
-    { "source": "/query/(.*)", "destination": "/api/query" }
-  ]
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/api/dashboard" },
+      { "source": "/query/(.*)", "destination": "/api/query"}
+    ]
 }
