@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
-from query import get_drug_info_chembl , get_drug_info_pubchem , get_drug_info_unichem
+from query import *
 from global_schema import making_global_schema
 import json
 import redis
@@ -14,6 +14,7 @@ def home():
     if request.method == "POST":
         input_type = request.form["input_type"]
         input_data = request.form["input_data"]
+        role = request.form["role"]
 
         source_add = request.form["source_add"]
         source_remove = request.form["source_remove"]
@@ -23,7 +24,8 @@ def home():
         # Store the data in a session
         session["input_type"] = input_type
         session["input_data"] = input_data
-
+        session['role'] = role
+        
         session["source_add"] = source_add
         session["source_remove"] = source_remove
 
@@ -62,7 +64,7 @@ def home():
 
                 if(search_parameter == "inchikey"):
                         data = data_function(search_dict["inchikey"])
-                        data_list.append(data)
+                        data_list.append(data) 
 
                 try:
                     if data['molecule_chembl_id'] :
@@ -73,10 +75,7 @@ def home():
                     if data['canonical_smiles']:
                         search_dict['cannonical_smiles'] = data['canonical_smiles']
                 except:
-                    print("SEARCH DATA NOT STORED")
-                    
-        
-                
+                    print("SEARCH DATA NOT STORED")                
                 redis_key = data_source_name
                 redis_client.set(redis_key, json.dumps(data))
                 # session[data_source_name] = data
@@ -86,9 +85,7 @@ def home():
             redis_key = 'global_data'
             redis_client.set(redis_key, json.dumps(global_values))
 
-        
-        session['sources'] = data_sources
-        if(input_type == "drug_name"):
+        def func2():
             if(source_add == 'NONE' and source_remove =='NONE'):
                 functions(data_sources)
                 return redirect("/result")
@@ -116,7 +113,41 @@ def home():
                 return redirect("/result")
             elif source_add != 'NONE' and source_remove != "NONE":  ##we are adding as well removing a new data sources
                 print(source_add , 'is been added and ', source_remove , 'is been removed')
+        
+        
+        session['sources'] = data_sources
+
+
+        if(input_type == "drug_name"):
+                func2()
                 return redirect("/result")
+            
+        if(input_type == "chembl_id"):
+            drug_name = chembl_id_to_drug_name(input_data)
+            input_data = drug_name
+            session["input_data"] = input_data
+            func2()
+            return redirect("/result")
+        
+        if(input_type == 'smiles'):
+            drug_name = smiles_to_drug(input_data)
+            input_data = drug_name
+            session["input_data"] = input_data
+            func2()
+            return redirect("/result")
+        
+        if(input_type == 'pubchem_id'):
+            drug_name = pubchem_id_to_drug(input_data)
+            input_data = drug_name
+            session["input_data"] = input_data
+            print("drug name is:   " , input_data)
+            func2()
+            return redirect("/result")
+
+
+
+
+
 
 
                 
@@ -131,6 +162,8 @@ def home():
 def result():
     input_type = session.get("input_type", "No input type")
     input_data = session.get("input_data", "No input data")
+    role = session.get("role", "No input data")
+
     data_sources = session.get("sources", "No input data")
     # print(data_sources)
 
@@ -159,7 +192,7 @@ def result():
 
 
     
-    return render_template("result.html", input_type=input_type, input_data=input_data , assembled_data = assembled_data , global_values = global_values , source_add = source_add , source_remove=source_remove)
+    return render_template("result.html", input_type=input_type, input_data=input_data , assembled_data = assembled_data , global_values = global_values , source_add = source_add , source_remove=source_remove , role = role)
 
     # global_values = global_values
 

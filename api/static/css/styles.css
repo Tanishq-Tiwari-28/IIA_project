@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.info-section {
+    margin-bottom: 20px;
+}
+
+.data-section h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+.data-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.data-section li {
+    margin-bottom: 8px;
+    word-wrap: break-word; /* Break word if it's too long */
+}
+
+.data-section .key {
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+.data-section li:last-child {
+    margin-bottom: 0;
+}

@@ -1,4 +1,6 @@
 import pubchempy as pcp
+from rdkit import Chem
+
 import json
 def is_serializable(data):
     try:
@@ -63,7 +65,7 @@ def get_drug_info_chembl(name):
         molecule_structures = drug_info.get('molecule_structures')
         # molecule_synonym = drug_info.get('molecule_synonyms')
 
-    
+     
         chembl_attributes = list(drug_info.keys()) + list(molecule_properties.keys()) + list(molecule_structures.keys())
         
         # print((chembl_attributes))
@@ -112,6 +114,30 @@ def get_drug_info_unichem(inchi_key):
     return data_dict
 
 
+def pubchem_id_to_drug(pubchem_id):
+    from pubchempy import Compound
+    comp = Compound.from_cid(pubchem_id)
+    drug_name = comp.synonyms[0]
+    return drug_name
 
-# get_drug_from_unichem("BNRNXUUZRGQAQC-UHFFFAOYSA-N" , '') 
+
+def chembl_id_to_drug_name(chembl_id):
+    from chembl_webresource_client.new_client import new_client
+    molecule = new_client.molecule
+    mol = molecule.get(chembl_id)
+    drug_name = mol["pref_name"]
+    return drug_name
+
+
+
+def smiles_to_drug(smiles):
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return None
+
+    compound = pcp.get_compounds(smiles, 'smiles')
+    if compound:
+        return compound[0].to_dict(properties=['synonyms'])['synonyms'][0]
+    else:
+        return None
 

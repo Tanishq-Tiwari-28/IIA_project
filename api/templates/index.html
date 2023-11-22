@@ -6,10 +6,18 @@
 <body>
     <h1>Input Form</h1>
     <form method="POST">
+
+        <label for="role">What is your Role:</label>
+        <select id="role" name="role">
+            <option value="NONE">NONE</option>
+            <option value="student">Student</option>
+            <option value="researcher">Researcher</option>
+            
+        </select><br><br>
+      
         <label for="input_type">Select Input Type:</label>
         <select id="input_type" name="input_type">
             <option value="drug_name">Drug Name</option>
-            <option value="Inchikey">Inchi Key</option>
             <option value="chembl_id">Chembl ID</option>
             <option value="pubchem_id">PubChem ID</option>
             <option value="smiles">cannonical smiles</option>

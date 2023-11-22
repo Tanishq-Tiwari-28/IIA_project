@@ -3,43 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/styles.css">
     <title>Result Page</title>
 </head>
 <body>
-    <p>Input Type: {{ input_type }}</p>
-    <p>Input Data: {{ input_data }}</p>
+    <div class="container">
+        <div class="info-section">
+            <p>Input Type: {{ input_type }}</p>
+            <p>Input Data: {{ input_data }}</p>
+            <p>Role: {{ role }}</p>
+        </div>
 
-    
-
-    <h2>CHEMBL Data:</h2>
-        <ul>
-            {% for key, value in assembled_data['chembl'].items() %}
-            <li>{{ key }}: {{ value }}</li>
-            {% endfor %}
-        </ul>
-    
-    <h2>PUBCHEM Data:</h2>
-        <ul>
-            {% for key, value in assembled_data['pubchem'].items() %}
-            <li>{{ key }}: {{ value }}</li>
-            {% endfor %}
-        </ul>
-    
-    {%if assembled_data['unichem']%}
-    <h2>UNICHEM Data:</h2>
-    <ul>
-        {% for key, value in assembled_data['unichem'].items() %}
-        <li>{{ key }}: {{ value }}</li>
-        {% endfor %}
-    </ul>
-    {%endif%}
-
-    <h2>GLOBAL Data:</h2>
-    <ul>
-        {% for key, value in global_values.items() %}
-        <li>{{ key }}: {{ value }}</li>
-        {% endfor %}
-    </ul>
-
-    </body>
+        <div class="data-section">
+            <h2>CHEMBL Data:</h2>
+            <ul>
+                {% for key, value in assembled_data['chembl'].items() %}
+                    <li><span class="key">{{ key }}</span>: {{ value }}</li>
+                {% endfor %}
+            </ul> 
+            <br><br>
+            <h2>PUBCHEM Data:</h2>
+            <ul>
+                {% for key, value in assembled_data['pubchem'].items() %}
+                    <li><span class="key">{{ key }}</span>: {{ value }}</li>
+                {% endfor %}
+            </ul>
+            <br><br>
+            {% if assembled_data['unichem'] %}
+                <h2>UNICHEM Data:</h2>
+                <ul>
+                    {% for key, value in assembled_data['unichem'].items() %}
+                        <li><span class="key">{{ key }}</span>: {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <br><br>
+            <h2>GLOBAL Data:</h2>
+            <ul>
+                {% for key, value in global_values.items() %}
+                    <li><span class="key">{{ key }}</span>: {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
 </html>
